@@ -1,0 +1,8 @@
+basic-pitch==0.4.0
+demucs==4.1.0
+piano_transcription_inference
+fastapi
+uvicorn[standard]
+python-multipart
+soundfile
+setuptools<81

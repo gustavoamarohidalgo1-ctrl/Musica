@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AppMusica — Audio a MIDI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">♪</span>
+      <div>
+        <h1>AppMusica</h1>
+        <p>Convierte una canción en las teclas que se están tocando</p>
+      </div>
+    </div>
+    <span id="device-badge" class="badge"></span>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="card">
+        <h2>Nueva canción</h2>
+        <form id="upload-form">
+          <label id="dropzone" class="dropzone">
+            <input id="file-input" type="file" accept="audio/*,video/mp4,.m4a,.flac,.ogg,.opus,.aiff" hidden>
+            <span class="dz-icon">⬆</span>
+            <span id="dz-text">Arrastra un audio aquí o <u>elige un archivo</u></span>
+            <small>MP3, WAV, M4A, FLAC, OGG…</small>
+          </label>
+
+          <fieldset class="modes">
+            <legend>¿Qué tipo de audio es?</legend>
+            <label class="mode">
+              <input type="radio" name="mode" value="separar" checked>
+              <span><b>Canción completa</b><small>Separa piano, guitarra, bajo, voz… y saca las notas de cada uno</small></span>
+            </label>
+            <label class="mode">
+              <input type="radio" name="mode" value="piano">
+              <span><b>Solo piano</b><small>Sin separar. Lo más preciso para piano solo</small></span>
+            </label>
+            <label class="mode">
+              <input type="radio" name="mode" value="instrumento">
+              <span><b>Un solo instrumento</b><small>Guitarra, voz, flauta… sin separar</small></span>
+            </label>
+          </fieldset>
+
+          <label class="check">
+            <input id="piano-hq" type="checkbox" checked>
+            <span>Piano de alta precisión (ByteDance)</span>
+          </label>
+
+          <button id="upload-btn" class="btn primary" type="submit" disabled>Convertir a MIDI</button>
+        </form>
+      </section>
+
+      <section class="card history">
+        <h2>Historial</h2>
+        <ul id="history"></ul>
+      </section>
+    </aside>
+
+    <main id="main">
+      <section id="empty" class="empty">
+        <div class="empty-art">🎹</div>
+        <h2>Sube una canción para empezar</h2>
+        <p>La IA separa los instrumentos y detecta cada tecla presionada.<br>
+           Luego puedes verlas en el piano, escucharlas y descargar el MIDI.</p>
+      </section>
+
+      <section id="processing" class="card processing" hidden>
+        <h2 id="proc-title"></h2>
+        <p id="proc-step"></p>
+        <div class="bar"><div id="proc-bar"></div></div>
+        <small id="proc-pct"></small>
+      </section>
+
+      <section id="result" hidden>
+        <div class="result-head">
+          <div>
+            <h2 id="res-title"></h2>
+            <p id="res-meta" class="muted"></p>
+          </div>
+          <button id="dl-all" class="btn primary">⬇ Descargar MIDI (todo)</button>
+        </div>
+
+        <div id="tracks" class="tracks"></div>
+
+        <div class="transport card">
+          <button id="play" class="btn round" title="Reproducir / pausar (espacio)">▶</button>
+          <span id="time" class="time">0:00 / 0:00</span>
+          <input id="seek" type="range" min="0" max="1000" value="0" class="seek">
+          <div class="mixer">
+            <label>Escuchar
+              <select id="listen"></select>
+            </label>
+            <label>Volumen audio <input id="vol-audio" type="range" min="0" max="1" step="0.01" value="0.8"></label>
+            <label>Sonido MIDI <input id="vol-synth" type="range" min="0" max="1" step="0.01" value="0"></label>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="roll">Piano roll</button>
+          <button class="tab" data-tab="list">Secuencia de notas</button>
+          <div class="tab-tools">
+            <label>Ocultar notas débiles <input id="min-vel" type="range" min="0" max="100" value="0"><span id="min-vel-val">0</span></label>
+            <label>Zoom <input id="zoom" type="range" min="20" max="400" value="120"></label>
+            <label class="check small"><input id="follow" type="checkbox" checked> Seguir</label>
+          </div>
+        </div>
+
+        <div id="tab-roll" class="roll-wrap">
+          <canvas id="roll"></canvas>
+        </div>
+        <div id="tab-list" class="list-wrap" hidden>
+          <table class="notes">
+            <thead><tr><th>Tiempo</th><th>Nota</th><th>Tecla</th><th>Duración</th><th>Fuerza</th><th>Instrumento</th></tr></thead>
+            <tbody id="note-rows"></tbody>
+          </table>
+          <p id="list-more" class="muted"></p>
+        </div>
+
+        <div class="keyboard-wrap">
+          <canvas id="keyboard"></canvas>
+        </div>
+        <audio id="audio" preload="auto"></audio>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

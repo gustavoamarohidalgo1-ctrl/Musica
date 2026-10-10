@@ -1,0 +1,12 @@
+# Entorno de Python (se recrea con instalar.sh)
+.venv/
+__pycache__/
+*.pyc
+
+# Modelo de piano de ByteDance (~172 MB, lo descarga instalar.sh)
+models/
+
+# Canciones procesadas
+data/
+
+.DS_Store
